@@ -2,17 +2,64 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+public class PlayerController : MonoBehaviour {
+
+    public PlayerBody Body;
+    public PlayerGun Gun;
+    public PlayerRadial Radial;
+    
+    private bool isFacingLeft = false;
+
+    public float RotationSpeed = 5.0f; // Speed of rotation
+
+    void Awake() {
+        Body = GetComponentInChildren<PlayerBody>();
+        Gun = GetComponentInChildren<PlayerGun>();
+        Radial = GetComponentInChildren<PlayerRadial>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    void Update() {
+        Vector3 mouseWorldPosition = GetMouseWorldPosition();
+        RotateGun(mouseWorldPosition);
+        CheckMouseSide(mouseWorldPosition);
+        Radial.UpdateRadial(Gun.transform.right);
+
+        if(Input.GetKeyDown(KeyCode.Mouse0)) {
+            Gun.Fire();
+        }
+    }
+    /// <summary>
+    /// Returns the cursor position in world, using Camera and and Cameras Z position
+    /// </summary>
+    /// <returns></returns>
+    Vector3 GetMouseWorldPosition() {
+        // Get mouse position and convert it to world space
+        Vector3 mouseScreenPosition = Input.mousePosition;
+        mouseScreenPosition.z = Camera.main.WorldToScreenPoint(transform.position).z; // Match object's depth
+        Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
+        mouseWorldPosition.z = 0f; // Ensure Z is 0 in 2D
+        return mouseWorldPosition;
+    }
+    /// <summary>
+    /// Rotates Gun to chosen direction, using Slerp and Transform
+    /// </summary>
+    /// <param name="lookPosition">position to rotate towards</param>
+    public void RotateGun(Vector3 lookPosition) {
+        // Calculate the direction and rotation
+        Vector3 direction = (lookPosition - Gun.transform.position).normalized;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        // Smoothly rotate to the target angle
+        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle);
+        Gun.transform.rotation = Quaternion.Slerp(Gun.transform.rotation, targetRotation, RotationSpeed * Time.deltaTime);
+    }
+
+    void CheckMouseSide(Vector3 mousePos) {
+        if((mousePos.x - transform.position.x < 0 && !isFacingLeft)//is left 
+        || (mousePos.x - transform.position.x > 0 && isFacingLeft)) {//is right
+            Body.transform.localScale = Vector3.Scale(Body.transform.localScale, new Vector3(-1, 1, 1));
+            Gun.transform.localScale = Vector3.Scale(Gun.transform.localScale, new Vector3(1, -1, 1));
+            isFacingLeft = !isFacingLeft;
+        }
     }
 }
