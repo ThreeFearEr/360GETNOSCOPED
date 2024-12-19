@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class BorderSpawner : MonoBehaviour {
 
-    [SerializeField] GameObject borderPrefab;
+    GameObject borderPrefab;
     Transform[] borders = new Transform[4];
+    
+    [SerializeField] float expander = 4f;
 
     void Awake() {
         borderPrefab = Resources.Load<GameObject>("Prefabs/Border");
@@ -28,8 +30,6 @@ public class BorderSpawner : MonoBehaviour {
         // The width of the viewport is twice the aspect ratio times the orthographic size
         float worldHeight = orthoSize * 2;
         float worldWidth = worldHeight * aspectRatio;
-
-        float expander = 4f;
 
         // Top border
         borders[0].position = new Vector3(0, orthoSize + expander, 0);

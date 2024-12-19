@@ -1,13 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
     public PlayerBody Body;
     public PlayerGun Gun;
-    public PlayerRadial Radial;
-    
+    PlayerRadial radial;
+    Animator animator;
+
     private bool isFacingLeft = false;
 
     public float RotationSpeed = 5.0f; // Speed of rotation
@@ -15,16 +17,22 @@ public class PlayerController : MonoBehaviour {
     void Awake() {
         Body = GetComponentInChildren<PlayerBody>();
         Gun = GetComponentInChildren<PlayerGun>();
-        Radial = GetComponentInChildren<PlayerRadial>();
+        animator = GetComponent<Animator>();
+    }
+
+    private void Start() {
+        radial = GameManager.UIManager.GetComponentInChildren<PlayerRadial>();
     }
 
     void Update() {
+        if(!GameManager.isPlaying) return;
+
         Vector3 mouseWorldPosition = GetMouseWorldPosition();
         RotateGun(mouseWorldPosition);
         CheckMouseSide(mouseWorldPosition);
-        Radial.UpdateRadial(Gun.transform.right);
+        radial.UpdateRadial(Gun.transform.right);
 
-        if(Input.GetKeyDown(KeyCode.Mouse0)) {
+        if(Input.GetKeyDown(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.Mouse3) || Input.GetKeyDown(KeyCode.W)) {
             Gun.Fire();
         }
     }
@@ -61,5 +69,9 @@ public class PlayerController : MonoBehaviour {
             Gun.transform.localScale = Vector3.Scale(Gun.transform.localScale, new Vector3(1, -1, 1));
             isFacingLeft = !isFacingLeft;
         }
+    }
+
+    public void Die() {
+        animator.Play("PlayerDie");
     }
 }

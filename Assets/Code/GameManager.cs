@@ -4,20 +4,42 @@ using UnityEngine;
 
 public static class GameManager {
     
-    public static UIIndicatorController UIIndicators;
+    public static UIManager UIManager;
     
     public static float GameTime = 0;
-    private static float score;
+
+    private static int nOfFlicks = 0;
+    public static int NOfFlicks {
+        get {
+            return nOfFlicks;
+        }
+        set {
+            nOfFlicks = value;
+            UIManager.Radial.UpdateText();
+        }
+    }
+
+    private static int nOfMultiFlicks = 0;
+    public static int NOfMultiFlicks {
+        get {
+            return nOfMultiFlicks;
+        }
+        set {
+            nOfMultiFlicks = value;
+            UIManager.Radial.UpdateText();
+        }
+    }
 
     public static bool isPlaying = false;
 
-    public static float Score {
+    private static int score;
+    public static int Score {
         get {
             return score;
         }
-        set {
-            score = value;
-            UIIndicators.UpdateScore(value);
-        }
+    }
+    public static void AddScore(int value) {
+        score += value;
+        UIManager.UpdateScore(value);
     }
 }

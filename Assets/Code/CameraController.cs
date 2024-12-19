@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraShaker : MonoBehaviour {
+public class CameraController : MonoBehaviour {
     private Vector3 originalPosition;
     private float originalSize;
     private Coroutine shakeCoroutine;
@@ -64,5 +64,32 @@ public class CameraShaker : MonoBehaviour {
 
         Camera.main.orthographicSize = originalSize;
         zoomCoroutine = null;
+    }
+    
+    public void Zoom(Vector3 targetPosition, float targetSize, float duration) {
+        StartCoroutine(ZoomCoroutine(targetPosition, targetSize, duration));
+    }
+    private IEnumerator ZoomCoroutine(Vector3 targetPosition, float targetSize, float duration) {
+        Camera camera = Camera.main;
+        float startSize = Camera.main.orthographicSize;
+        Vector3 startPosition = Camera.main.transform.position;
+        targetPosition.z = startPosition.z;
+
+        float elapsedTime = 0f;
+
+        while(elapsedTime < duration) {
+            elapsedTime += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTime / duration);
+
+            // Smoothly interpolate the camera's size and position
+            camera.orthographicSize = Mathf.Lerp(startSize, targetSize, t);
+            camera.transform.position = Vector3.Slerp(startPosition, targetPosition, t);
+
+            yield return null;
+        }
+
+        // Ensure final size and position are exactly the target values
+        camera.orthographicSize = targetSize;
+        camera.transform.position = targetPosition;
     }
 }

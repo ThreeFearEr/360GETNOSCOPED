@@ -7,22 +7,20 @@ public class PlayerGun : MonoBehaviour {
     [SerializeField] private GameObject bulletPrefab;
 
     private Transform firePoint;
-    private PlayerRadial radial;
     private Transform bulletBin;
-    private CameraShaker cameraShaker;
+    private CameraController cameraShaker;
     private Animator animator;
 
     private bool isReloading = false;
-    public float ReloadTime = 1;
+    private float reloadTime = 1;
 
     [SerializeField] float recoilPower;
     [SerializeField] float recoilDuration;
 
     public void Awake() {
         bulletPrefab = Resources.Load<GameObject>("Prefabs/Bullet");
-        radial = transform.parent.GetComponentInChildren<PlayerRadial>();
         firePoint = GetComponentsInChildren<Transform>()[1];//first is this secon SHOULD be firePoint
-        cameraShaker = Camera.main.GetComponent<CameraShaker>();
+        cameraShaker = Camera.main.GetComponent<CameraController>();
         animator = GetComponent<Animator>();
 
         bulletBin = new GameObject("BulletBin").transform;
@@ -31,19 +29,28 @@ public class PlayerGun : MonoBehaviour {
     
     public void Fire() {
         if(isReloading) return;
-        BulletController bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation, bulletBin).GetComponent<BulletController>();
-        bullet.nOfBounces = 1 + radial.nOfFlicks * radial.nOfMultiFlicks;
-        bullet.nOfHits= 1 + radial.nOfFlicks * radial.nOfMultiFlicks;
-        cameraShaker.Shake(-firePoint.right, recoilPower + radial.nOfFlicks * 0.6f, recoilDuration + Mathf.Clamp(radial.nOfMultiFlicks * 0.4f, 0.1f, 0.4f));
-        animator.Play("GunFire");
-        StartCoroutine(countDown());
 
+        BulletController bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation, bulletBin).GetComponent<BulletController>();
+        int flickValue = 1 + GameManager.NOfFlicks * Mathf.Max(GameManager.NOfMultiFlicks, 1);
+        bullet.nOfBounces = flickValue;
+        bullet.scoreBounty = flickValue;
+        GameManager.UIManager.Radial.ResetRadial(transform.right);
+        cameraShaker.Shake(-firePoint.right, recoilPower + GameManager.NOfFlicks * 0.6f, Mathf.Min(recoilDuration + GameManager.NOfMultiFlicks * 0.04f, 0.4f));
+        animator.Play("GunFire");
+
+        StartCoroutine(countDown());
     }
 
     IEnumerator countDown() {
+        GameManager.UIManager.SetCursorToReload();
         isReloading = true;
-        yield return new WaitForSeconds(ReloadTime);
+        for(float f = 0; f < reloadTime; f += Time.deltaTime) {
+            GameManager.UIManager.Reloader.UpdateReloader(f, reloadTime);
+            yield return null;
+        }
         isReloading = false;
+        GameManager.UIManager.SetCursorToIddle();
+        GameManager.UIManager.Reloader.HideReloader();
     }
 
     //screen shake on flicks, hitmarker cursor?

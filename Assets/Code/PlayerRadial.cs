@@ -1,17 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
-using Microsoft.Win32.SafeHandles;
-using Unity.VisualScripting;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerRadial : MonoBehaviour {
 
-    private CameraShaker cameraShaker;
+    private CameraController cameraShaker;
 
     Image radial;
     Image ring;
     Image secRing;
+    TextMeshProUGUI txtBox;
 
     struct Radial {
         public float time;
@@ -25,14 +25,12 @@ public class PlayerRadial : MonoBehaviour {
     bool isWaiting = true;
     float originTime = 0;
 
-    public int nOfFlicks = 0;
-    public int nOfMultiFlicks = 0;
-
     void Awake() {
-        cameraShaker = Camera.main.GetComponent<CameraShaker>();
+        cameraShaker = Camera.main.GetComponent<CameraController>();
         radial = GetComponentsInChildren<Image>()[0];
         ring = GetComponentsInChildren<Image>()[1];
         secRing = GetComponentsInChildren<Image>()[2];
+        txtBox = GetComponentInChildren<TextMeshProUGUI>();
     }
 
     void Start() {
@@ -69,14 +67,15 @@ public class PlayerRadial : MonoBehaviour {
         else if((lastAngle < 0 && isClockwive) || (lastAngle > 0 && !isClockwive)) {
             //clockwise flip handling
             transform.localScale = Vector3.Scale(transform.localScale, new Vector3(1, -1, 1));
+            txtBox.transform.localScale = Vector3.Scale(txtBox.transform.localScale, new Vector3(1, -1, 1));
             isClockwive = !isClockwive;
             ResetRadial(curDirection);
         }
         else {
-            if(nOfFlicks > 0 && curRadial.time - originTime > flickDuration) {
+            if(GameManager.NOfFlicks > 0 && curRadial.time - originTime > flickDuration) {
                 //multiFlicks reset
                 originTime = originRadial.time;
-                nOfMultiFlicks = 0;
+                GameManager.NOfMultiFlicks = 1;
             }
             if((originAngle < 0 && isClockwive)
             || (originAngle > 0 && !isClockwive)) {
@@ -88,9 +87,9 @@ public class PlayerRadial : MonoBehaviour {
                 //flicked
                 isOver180 = false;
                 originRadial.time = curRadial.time;
-                nOfFlicks++;
-                nOfMultiFlicks++;
-                cameraShaker.ZoomShake(Mathf.Clamp(-zoomSize - nOfFlicks * 0.2f, -6, 0), Mathf.Clamp(zoomDuration - nOfMultiFlicks * 0.04f, 0.1f, 1f));
+                GameManager.NOfFlicks++;
+                GameManager.NOfMultiFlicks++;
+                cameraShaker.ZoomShake(Mathf.Clamp(-zoomSize - GameManager.NOfFlicks * 0.2f, -6, 0), Mathf.Clamp(zoomDuration - GameManager.NOfMultiFlicks * 0.04f, 0.1f, 1f));
             }
 
             if(lastAngle != 0) radial.fillAmount = Mathf.Abs(originAngle) / 360;
@@ -112,13 +111,22 @@ public class PlayerRadial : MonoBehaviour {
         originTime = curRadial.time;
         isOver180 = false;
         isWaiting = true;
-        nOfFlicks = 0;
-        nOfMultiFlicks = 0;
+        GameManager.NOfFlicks = 0;
+        GameManager.NOfMultiFlicks = 0;
 
         //stop 
         radial.fillAmount = 0;
         ring.fillAmount = 0;
         secRing.fillAmount = 0;
+    }
+
+    public void UpdateText() {
+        txtBox.transform.rotation = Quaternion.identity;
+        txtBox.fontSize = Mathf.Min(3 + GameManager.NOfFlicks * 0.1f, 5);
+        txtBox.color = new Color32(255, (byte)Mathf.Max(255 - GameManager.NOfMultiFlicks * 48, 0), 0, 255);
+        if(GameManager.NOfMultiFlicks > 1) txtBox.fontStyle = FontStyles.Underline;
+        else txtBox.fontStyle = FontStyles.Normal;
+        txtBox.text = GameManager.NOfFlicks.ToString();
     }
 
     private void OnDrawGizmos() {
@@ -134,11 +142,11 @@ public class PlayerRadial : MonoBehaviour {
 
 
         Gizmos.color = Color.red;
-        for(int i = 0; i < nOfFlicks; i++) {
+        for(int i = 0; i < GameManager.NOfFlicks; i++) {
             Gizmos.DrawLine(center - Vector3.right - side + Vector3.up * i, center + Vector3.right - side + Vector3.up * i);
         }
         Gizmos.color = Color.yellow;
-        for(int i = 0; i < nOfMultiFlicks; i++) {
+        for(int i = 0; i < GameManager.NOfMultiFlicks; i++) {
             Gizmos.DrawLine(center - Vector3.right - side + Vector3.up * i + Vector3.up * 0.1f, center + Vector3.right - side + Vector3.up * i + Vector3.up * 0.1f);
         }
         Gizmos.color = Color.black;
