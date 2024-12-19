@@ -1,10 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using Microsoft.Win32.SafeHandles;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerRadial : MonoBehaviour {
+
+    private CameraShaker cameraShaker;
+
     Image radial;
     Image ring;
     Image secRing;
@@ -13,67 +17,80 @@ public class PlayerRadial : MonoBehaviour {
         public float time;
         public Vector3 dir;
     }
-    Radial originRadial = new Radial { dir = Vector3.zero, time = 0 };
-    Radial lastRadial = new Radial { dir = Vector3.zero, time = 0 };
+    Radial originRadial;
+    Radial lastRadial;
 
     bool isClockwive = true;
     bool isOver180 = false;
+    bool isWaiting = true;
     float originTime = 0;
 
     public int nOfFlicks = 0;
     public int nOfMultiFlicks = 0;
 
     void Awake() {
+        cameraShaker = Camera.main.GetComponent<CameraShaker>();
         radial = GetComponentsInChildren<Image>()[0];
         ring = GetComponentsInChildren<Image>()[1];
         secRing = GetComponentsInChildren<Image>()[2];
     }
 
+    void Start() {
+        ResetRadial(Vector3.right);
+    }
+
     [SerializeField] private float flickDuration = 1;
     [SerializeField] private float flickStartAngle = 1;
+    [SerializeField] private float flickStartCheck = 0.1f;
+
+    [Header("Debug")]
+    [SerializeField] float zoomSize;
+    [SerializeField] float zoomDuration;
     public void UpdateRadial(Vector3 curDirection) {
-        Radial curRadial = new Radial { dir = curDirection, time = Time.time};
+        Radial curRadial = new Radial { dir = curDirection, time = Time.time };
         float lastAngle = Vector3.SignedAngle(curDirection, lastRadial.dir, Vector3.forward);
-
+        float originAngle = Vector3.SignedAngle(curDirection, originRadial.dir, Vector3.forward);
+        
         float delay = curRadial.time - originRadial.time;
-        if(nOfFlicks > 0 && curRadial.time - originTime > flickDuration) {
-            originTime = originRadial.time;
-            nOfMultiFlicks = 0;
-        }
-        if(delay > flickDuration || ((lastAngle < 0 && isClockwive) || (lastAngle > 0 && !isClockwive))) {
-            if(Mathf.Abs(lastAngle) > flickStartAngle) {
-                //reset
-                originRadial = curRadial;
-                float curAngle = Mathf.Atan2(originRadial.dir.y, originRadial.dir.x) * Mathf.Rad2Deg;
-                transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, curAngle));
-                originTime = curRadial.time;
 
-                //clockwise flip handling
-                if((lastAngle < 0 && isClockwive) || (lastAngle > 0 && !isClockwive)) {
-                    transform.localScale = Vector3.Scale(transform.localScale, new Vector3(1, -1, 1));
-                    isClockwive = !isClockwive;
+        if(isWaiting) {
+            if(delay > flickStartCheck) {
+                if(Mathf.Abs(originAngle) > flickStartAngle) {
+                    isWaiting = false;
                 }
-            } else {
-                radial.fillAmount = 0;
-                ring.fillAmount = 0;
-                secRing.fillAmount = 0;
+                else {
+                    ResetRadial(curDirection);
+                }
             }
-            isOver180 = false;
-            nOfFlicks = 0;
-            nOfMultiFlicks= 0;
-        } else {
-            float originAngle = Vector3.SignedAngle(curDirection, originRadial.dir, Vector3.forward);
-
-            //handling of full circle (anlgles are in range (-180, 180> ) ouput Hf<0, 360)
+        }
+        else if(delay > flickDuration) {
+            ResetRadial(curDirection);
+        }
+        else if((lastAngle < 0 && isClockwive) || (lastAngle > 0 && !isClockwive)) {
+            //clockwise flip handling
+            transform.localScale = Vector3.Scale(transform.localScale, new Vector3(1, -1, 1));
+            isClockwive = !isClockwive;
+            ResetRadial(curDirection);
+        }
+        else {
+            if(nOfFlicks > 0 && curRadial.time - originTime > flickDuration) {
+                //multiFlicks reset
+                originTime = originRadial.time;
+                nOfMultiFlicks = 0;
+            }
             if((originAngle < 0 && isClockwive)
             || (originAngle > 0 && !isClockwive)) {
+                //handling of full circle (anlgles are in range (-180, 180> ) ouput Hf<0, 360)
                 isOver180 = true;
                 originAngle = 360 - Mathf.Abs(originAngle);//for originAngle < 0 it would be 360 + - originalAngle
-            } else if(isOver180) {
+            }
+            else if(isOver180) {
+                //flicked
                 isOver180 = false;
                 originRadial.time = curRadial.time;
                 nOfFlicks++;
                 nOfMultiFlicks++;
+                cameraShaker.ZoomShake(Mathf.Clamp(-zoomSize - nOfFlicks * 0.2f, -6, 0), Mathf.Clamp(zoomDuration - nOfMultiFlicks * 0.04f, 0.1f, 1f));
             }
 
             if(lastAngle != 0) radial.fillAmount = Mathf.Abs(originAngle) / 360;
@@ -84,11 +101,31 @@ public class PlayerRadial : MonoBehaviour {
         lastRadial = curRadial;
     }
 
+    public void ResetRadial(Vector3 curDirection) {
+        Radial curRadial = new Radial { dir = curDirection, time = Time.time };
+        float lastAngle = Vector3.SignedAngle(curDirection, lastRadial.dir, Vector3.forward);
+
+        //reset
+        originRadial = curRadial;
+        float curAngle = Mathf.Atan2(originRadial.dir.y, originRadial.dir.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, curAngle));
+        originTime = curRadial.time;
+        isOver180 = false;
+        isWaiting = true;
+        nOfFlicks = 0;
+        nOfMultiFlicks = 0;
+
+        //stop 
+        radial.fillAmount = 0;
+        ring.fillAmount = 0;
+        secRing.fillAmount = 0;
+    }
+
     private void OnDrawGizmos() {
         if(!Application.isPlaying) return;
         Vector3 center = new Vector3(20, 0, 0);
         Vector3 side = new Vector3(0, 10, 0);
-        
+
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(transform.position, transform.position + originRadial.dir * 10);
         if(isClockwive) Gizmos.color = Color.green;
@@ -105,7 +142,7 @@ public class PlayerRadial : MonoBehaviour {
             Gizmos.DrawLine(center - Vector3.right - side + Vector3.up * i + Vector3.up * 0.1f, center + Vector3.right - side + Vector3.up * i + Vector3.up * 0.1f);
         }
         Gizmos.color = Color.black;
-        Gizmos.DrawLine(center + side - center/20, center + side + center / 20);
+        Gizmos.DrawLine(center + side - center / 20, center + side + center / 20);
         Gizmos.color = Color.green;
         Gizmos.DrawLine(center - side, center - side + side * 2 * (Time.time - originRadial.time) / flickDuration);
     }

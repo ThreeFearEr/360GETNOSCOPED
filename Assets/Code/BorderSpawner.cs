@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraBorders : MonoBehaviour {
+public class BorderSpawner : MonoBehaviour {
 
     [SerializeField] GameObject borderPrefab;
     Transform[] borders = new Transform[4];
@@ -29,20 +29,22 @@ public class CameraBorders : MonoBehaviour {
         float worldHeight = orthoSize * 2;
         float worldWidth = worldHeight * aspectRatio;
 
+        float expander = 4f;
+
         // Top border
-        borders[0].position = new Vector3(0, orthoSize, 0);
-        borders[0].localScale = new Vector3(worldWidth, 1, 1);  // Scale to match the width of the camera's viewport
+        borders[0].position = new Vector3(0, orthoSize + expander, 0);
+        borders[0].localScale = new Vector3(worldWidth + expander * 2, 1, 1);  // Scale to match the width of the camera's viewport
 
         // Bottom border
-        borders[1].position = new Vector3(0, -orthoSize, 0);
-        borders[1].localScale = new Vector3(worldWidth, 1, 1);  // Scale to match the width of the camera's viewport
+        borders[1].position = new Vector3(0, -orthoSize - expander, 0);
+        borders[1].localScale = new Vector3(worldWidth + expander * 2, 1, 1);  // Scale to match the width of the camera's viewport
 
         // Left border
-        borders[2].position = new Vector3(-worldWidth / 2, 0, 0);
-        borders[2].localScale = new Vector3(1, worldHeight, 1);  // Scale to match the height of the camera's viewport
+        borders[2].position = new Vector3(-worldWidth / 2 - expander, 0, 0);
+        borders[2].localScale = new Vector3(1, worldHeight + expander * 2, 1);  // Scale to match the height of the camera's viewport
 
         // Right border
-        borders[3].position = new Vector3(worldWidth / 2, 0, 0);
-        borders[3].localScale = new Vector3(1, worldHeight, 1);  // Scale to match the height of the camera's viewport
+        borders[3].position = new Vector3(worldWidth / 2 + expander, 0, 0);
+        borders[3].localScale = new Vector3(1, worldHeight + expander * 2, 1);  // Scale to match the height of the camera's viewport
     }
 }
