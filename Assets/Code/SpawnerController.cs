@@ -22,7 +22,6 @@ public class SpawnerController : MonoBehaviour {
     public int EnemiesPerSpawn = 1;
 
     private void Awake() {
-        GameManager.isPlaying = true;
         enemyPrefab = Resources.Load<GameObject>("Prefabs/Enemy");
 
         enemyBin = new GameObject("EnemyBin").transform;

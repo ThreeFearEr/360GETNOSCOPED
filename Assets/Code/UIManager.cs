@@ -21,6 +21,8 @@ public class UIManager : MonoBehaviour {
 
     private void Awake() {
         GameManager.UIManager = this;
+        GameManager.Reset();
+
         curtainFader = GetComponentInChildren<CurtainFader>();
         Radial = GetComponentInChildren<PlayerRadial>();
         Reloader = GetComponentInChildren<PlayerReloader>();
@@ -63,7 +65,6 @@ public class UIManager : MonoBehaviour {
     bool resetEnabled = false;
     private void Update() {
         if(Input.GetKeyDown(KeyCode.Escape) || (Input.GetKeyDown(KeyCode.Mouse0) && !GameManager.isPlaying && resetEnabled)) {
-            GameManager.Reset();
             curtainFader.LoadGameAsync("Game");
         }
     }
