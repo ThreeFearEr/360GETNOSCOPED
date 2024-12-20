@@ -39,3 +39,6 @@ The webgl build should be playable but with some slight issues
   <li>custom cursors are absurdly big</li>
 </ul>
 apart from that it SHOULD be fine
+
+<h4>Ohter</h4>
+Also didnt have time to implement audio, i will probably implement it in future days
