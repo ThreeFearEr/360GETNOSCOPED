@@ -17,7 +17,7 @@ Lots of UI should be self explenatory, but:
   <li>curent flick count with colors and under line based on number of current multiflicks</li>
   <li>score with its addition</li>
   <li>realod bar under cursor when reloading (with change of cursor for better visibility when you move your mouse rapidly)</li>
-  <li>so called "radial" bar around player that indicates your flick progress, red bar is remaining time for next flick and yellow is remaining time for next multiflick (more flicks er second)</li>
+  <li>so called "radial" bar around player that indicates your flick progress, red bar is remaining time for next flick and yellow is remaining time for next multiflick</li>
 </ul>
 
 
@@ -30,3 +30,12 @@ I had kept basic cheats in final build
   <li>Esc = restart game scene</li>
   <li>space = to skip intro video</li>
 </ul>
+
+
+<h4>WebGl</h4>
+The webgl build should be playable but with some slight issues
+<ul>
+  <li>intro when you lunch game does not work</li>
+  <li>custom cursors are absurdly big</li>
+</ul>
+apart from that it SHOULD be fine
