@@ -12,7 +12,7 @@ If you do more than one flick per second you gain multiflicks that multiply your
 Gun rotates towards your cursor. Left click to fire your gun.
 
 <h2>Ui</h2>
-Lots of UI should be self explemantory, but:
+Lots of UI should be self explenatory, but:
 <ul>
   <li>curent flick count with colors and under line based on number of current multiflicks</li>
   <li>score with its addition</li>
