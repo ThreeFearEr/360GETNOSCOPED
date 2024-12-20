@@ -8,7 +8,7 @@ granting extra bounces and extra score per enemy (and also bigger screen shake) 
 
 If you do more than one flick per second you gain multiflicks that multiply your shot power by number of curent flicks, but they last only 1 second so you have to get them last just before firing to get any bonuses. Average player should be able to get at least 1 to 3 multiflicks, if you are pro gamer you can get up to 5 more than that should be pretty much immposible.
 
-<h2>Controlls</h>
+<h2>Controlls</h2>
 Gun rotates towards your cursor. Left click to fire your gun.
 
 <h2>Ui</h2>
