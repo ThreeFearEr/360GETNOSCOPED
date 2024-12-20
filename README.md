@@ -1,7 +1,8 @@
 Didnt have time for turorial so...
 
 <h2>Gameplay</h2>
-You fire your gun and your goal is to get the most score by killing enemies. Game ends once enemies get to you (thus survive)
+You fire your gun and your goal is to get the most score by killing enemies. Game ends once enemies get to you (thus survive).
+
 Additionaly each time you do 360 (one 360 rotation is called flick for clarity) with your gun under 1s and without change of direction you enhacne your next shot
 granting extra bounces and extra score per enemy (and also bigger screen shake) so best strategy would be to do as many flicks as you can while then fire your empovered shot tring to hit as many enemies as possible all while keping distance from enemies.
 
