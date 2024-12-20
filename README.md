@@ -16,7 +16,7 @@ Lots of UI should be self explenatory, but:
 <ul>
   <li>curent flick count with colors and under line based on number of current multiflicks</li>
   <li>score with its addition</li>
-  <li>realod bar under cursor when reloadint (with change of cursor for better visibility when you move your mouse rapidly)</li>
+  <li>realod bar under cursor when reloading (with change of cursor for better visibility when you move your mouse rapidly)</li>
   <li>so called "radial" bar around player that indicates your flick progress, red bar is remaining time for next flick and yellow is remaining time for next multiflick (more flicks er second)</li>
 </ul>
 
