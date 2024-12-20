@@ -4,7 +4,7 @@ Didnt have time for turorial so...
 You fire your gun and your goal is to get the most score by killing enemies. Game ends once enemies get to you (thus survive).
 
 Additionaly each time you do 360 (one 360 rotation is called flick for clarity) with your gun under 1s and without change of direction you enhacne your next shot
-granting extra bounces and extra score per enemy (and also bigger screen shake) so best strategy would be to do as many flicks as you can then fire your empovered shot tring to hit as many enemies as possible all while keping distance from enemies. 
+granting extra bounces and extra score per enemy (and also bigger screen shake) so best strategy would be to do as many flicks as you can then fire your empovered shot trying to hit as many enemies as possible all while keping distance from enemies. 
 
 If you do more than one flick per second you gain multiflicks that multiply your shot power by number of curent flicks, but they last only 1 second so you have to get them last just before firing to get any bonuses. Average player should be able to get at least 1 to 3 multiflicks, if you are pro gamer you can get up to 5 more than that should be pretty much immposible.
 
