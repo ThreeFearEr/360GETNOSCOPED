@@ -10,10 +10,12 @@ Gun rotates towards your cursor. Left click to fire your gun.
 
 <h2>Ui</h2>
 Lots of UI should be self explemantory, but:
-- curent flick count with colors based on how many flick you did in ne second
-- score with its addition
-- realod bar under cursor when reloadint (with change of cursor for better visibility when you move your mouse rapidly)
-- so called "radial" bar around player that indicates your flick progress, red bar is remaining time for next flick and yellow is remaining time for next multiflick (more flicks er second)
+<ul>
+  <li>curent flick count with colors based on how many flick you did in ne second</li>
+  <li>score with its addition</li>
+  <li>realod bar under cursor when reloadint (with change of cursor for better visibility when you move your mouse rapidly)</li>
+  <li>so called "radial" bar around player that indicates your flick progress, red bar is remaining time for next flick and yellow is remaining time for next multiflick (more flicks er second)</li>
+</ul>
 
 
 <h3>Cheats</h3>
