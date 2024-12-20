@@ -63,6 +63,7 @@ public class UIManager : MonoBehaviour {
     bool resetEnabled = false;
     private void Update() {
         if(Input.GetKeyDown(KeyCode.Escape) || (Input.GetKeyDown(KeyCode.Mouse0) && !GameManager.isPlaying && resetEnabled)) {
+            GameManager.Reset();
             curtainFader.LoadGameAsync("Game");
         }
     }

@@ -5,8 +5,6 @@ using UnityEngine;
 public static class GameManager {
     
     public static UIManager UIManager;
-    
-    public static float GameTime = 0;
 
     private static int nOfFlicks = 0;
     public static int NOfFlicks {
@@ -41,5 +39,12 @@ public static class GameManager {
     public static void AddScore(int value) {
         score += value;
         UIManager.UpdateScore(value);
+    }
+
+    public static void Reset() {
+        score = 0;
+        nOfFlicks = 0;
+        nOfMultiFlicks = 0;
+        isPlaying = true;
     }
 }
