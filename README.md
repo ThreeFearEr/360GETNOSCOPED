@@ -18,8 +18,10 @@ Lots of UI should be self explemantory, but:
 
 <h3>Cheats</h3>
 I had kept basic cheats in final build
-- F2 + 1 = set Time.scale to 1
-- F2 + 2 = divide Time.scale by 2
-- F2 + 3 = multiply Time.scale by 2
-- Esc = restart game scene
-- space = to skip intro video
+<ul>
+  <li>F2 + 1 = set Time.scale to 1</li>
+  <li>F2 + 2 = divide Time.scale by 2</li>
+  <li>F2 + 3 = multiply Time.scale by 2</li>
+  <li>Esc = restart game scene</li>
+  <li>space = to skip intro video</li>
+</ul>
