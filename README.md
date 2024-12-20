@@ -8,7 +8,7 @@ granting extra bounces and extra score per enemy (and also bigger screen shake) 
 <h2>Controlls</h>
 Gun rotates towards your cursor. Left click to fire your gun.
 
-<h2>Ui</h>
+<h2>Ui</h2>
 Lots of UI should be self explemantory, but:
 - curent flick count with colors based on how many flick you did in ne second
 - score with its addition
