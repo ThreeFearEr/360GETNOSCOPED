@@ -22,6 +22,7 @@ public class SpawnerController : MonoBehaviour {
     public int EnemiesPerSpawn = 1;
 
     private void Awake() {
+        GameManager.SpawnerController = this;
         enemyPrefab = Resources.Load<GameObject>("Prefabs/Enemy");
 
         enemyBin = new GameObject("EnemyBin").transform;
@@ -32,29 +33,31 @@ public class SpawnerController : MonoBehaviour {
 
     void Start() {
         InitializeSpawnPoints();
-        StartCoroutine(SpawnWaveCycle());
     }
 
     void InitializeSpawnPoints() {
         Vector3 cameraPosition = Camera.main.transform.position;
         float cameraWidth = Camera.main.orthographicSize * Camera.main.aspect;
-        float cameraHeight = Camera.main.orthographicSize;
+        //float cameraHeight = Camera.main.orthographicSize;
 
         // Define spawn points for the 4 sides and 4 corners
         Vector2[] sides = new Vector2[4]
         {
             new Vector2(cameraPosition.x - cameraWidth - adjust, cameraPosition.y), // Left
             new Vector2(cameraPosition.x + cameraWidth + adjust, cameraPosition.y), // Right
-            new Vector2(cameraPosition.x, cameraPosition.y + cameraHeight + adjust), // Top
-            new Vector2(cameraPosition.x, cameraPosition.y - cameraHeight - adjust) // Bottom
+            new Vector2(cameraPosition.x, cameraPosition.y + cameraWidth + adjust), // Top
+            new Vector2(cameraPosition.x, cameraPosition.y - cameraWidth - adjust) // Bottom
         };
 
+        float cornerOffset = cameraWidth / Mathf.Sqrt(2);
         Vector2[] corners = new Vector2[4]
         {
-            new Vector2(cameraPosition.x - cameraWidth - adjust, cameraPosition.y + cameraHeight + adjust), // Top-left
-            new Vector2(cameraPosition.x + cameraWidth + adjust, cameraPosition.y + cameraHeight + adjust), // Top-right
-            new Vector2(cameraPosition.x - cameraWidth - adjust, cameraPosition.y - cameraHeight - adjust), // Bottom-left
-            new Vector2(cameraPosition.x + cameraWidth + adjust, cameraPosition.y - cameraHeight - adjust) // Bottom-right
+            //new Vector2(cameraPosition.x - cameraWidth - adjust, cameraPosition.y + cameraWidth + adjust), // Top-left
+
+            new Vector2(cameraPosition.x - cornerOffset - adjust, cameraPosition.y + cornerOffset + adjust), // Top-left
+            new Vector2(cameraPosition.x + cornerOffset + adjust, cameraPosition.y + cornerOffset + adjust), // Top-right
+            new Vector2(cameraPosition.x - cornerOffset - adjust, cameraPosition.y - cornerOffset - adjust), // Bottom-left
+            new Vector2(cameraPosition.x + cornerOffset + adjust, cameraPosition.y - cornerOffset - adjust) // Bottom-right
         };
 
         // Create spawn sets by expanding around each main spawn point
@@ -78,8 +81,10 @@ public class SpawnerController : MonoBehaviour {
         return spawnSet;
     }
 
+    public void StartSpawnCycle() {
+        StartCoroutine(SpawnWaveCycle());
+    }
     IEnumerator SpawnWaveCycle() {
-        yield return new WaitForSeconds(1f);
         while(GameManager.isPlaying) {
             SpawnWave();
             yield return new WaitForSeconds(spawnInterval);

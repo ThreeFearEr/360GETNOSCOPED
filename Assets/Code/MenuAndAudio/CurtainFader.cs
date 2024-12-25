@@ -10,9 +10,16 @@ public class CurtainFader : MonoBehaviour
     public CanvasGroup canvasGroup;  // Reference to the CanvasGroup component
     public float fadeDuration = 0.4f;  // Duration for fading in/out
 
+    AsyncOperation nextScene;
+
     private void Awake() {
         canvasGroup = GetComponent<CanvasGroup>();
         curtain = GetComponentInChildren<Image>(true);
+
+    }
+
+    private void Start() {
+        PreloadScene("Game");
     }
 
     // Start fading out
@@ -23,6 +30,10 @@ public class CurtainFader : MonoBehaviour
     // Start fading in
     public void FadeIn() {
         StartCoroutine(FadeCanvasGroup(canvasGroup, 0f, 1f));
+    }
+
+    public void Fade(CanvasGroup cg, float startAlpha, float endAlpha) {
+        StartCoroutine(FadeCanvasGroup(cg, startAlpha, endAlpha));
     }
 
     // Coroutine to handle the fade effect
@@ -42,17 +53,18 @@ public class CurtainFader : MonoBehaviour
 
         if(endAlpha == 0) curtain.gameObject.SetActive(false);
     }
-
-    public void LoadGameAsync(string sceneName) {
-        StartCoroutine(LoadSceneCoroutine(sceneName));
+    
+    public void PreloadScene(string sceneName) {
+        nextScene = SceneManager.LoadSceneAsync(sceneName);
+        nextScene.allowSceneActivation = false;
     }
 
-    private IEnumerator LoadSceneCoroutine(string sceneName) {
-        yield return StartCoroutine(FadeCanvasGroup(canvasGroup, 0f, 1f));
-
-        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName);
-        while(!asyncOperation.isDone) {
-            yield return null;
-        }
+    public void NextScene() {
+        if(nextScene == null) return;
+        StartCoroutine(NextSceneCoroutine());
+    }
+    IEnumerator NextSceneCoroutine() {
+        nextScene.allowSceneActivation = true;
+        yield break;//yield return StartCoroutine(FadeCanvasGroup(canvasGroup, 0f, 1f));
     }
 }

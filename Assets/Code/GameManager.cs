@@ -5,6 +5,9 @@ using UnityEngine;
 public static class GameManager {
     
     public static UIManager UIManager;
+    public static SpawnerController SpawnerController;
+
+    public static bool Intro = true;
 
     private static int nOfFlicks = 0;
     public static int NOfFlicks {
@@ -45,6 +48,8 @@ public static class GameManager {
         score = 0;
         nOfFlicks = 0;
         nOfMultiFlicks = 0;
+        Intro = false;
         isPlaying = true;
+        SpawnerController.StartSpawnCycle();
     }
 }
