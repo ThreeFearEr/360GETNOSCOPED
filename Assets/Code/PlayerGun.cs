@@ -35,6 +35,8 @@ public class PlayerGun : MonoBehaviour {
         bullet.nOfBounces = flickValue;
         bullet.scoreBounty = flickValue;
         GameManager.UIManager.Radial.ResetRadial(transform.right);
+        GameManager.AudioController.PlayAudio("GunFire");
+        GameManager.AudioController.PlayAudio("BulletDrop");
         cameraShaker.Shake(-firePoint.right, recoilPower + GameManager.NOfFlicks * 0.6f, Mathf.Min(recoilDuration + GameManager.NOfMultiFlicks * 0.04f, 0.4f));
         animator.Play("GunFire");
 
@@ -49,6 +51,7 @@ public class PlayerGun : MonoBehaviour {
             yield return null;
         }
         isReloading = false;
+        GameManager.AudioController.PlayAudio("GunReload");
         GameManager.UIManager.SetCursorToIddle();
         GameManager.UIManager.Reloader.HideReloader();
     }

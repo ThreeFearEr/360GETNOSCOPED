@@ -6,8 +6,9 @@ public static class GameManager {
     
     public static UIManager UIManager;
     public static SpawnerController SpawnerController;
+    public static GameAudio AudioController;
 
-    public static bool Intro = true;
+    public static bool Intro = false;
 
     private static int nOfFlicks = 0;
     public static int NOfFlicks {

@@ -22,16 +22,9 @@ public class IntroVideo : MonoBehaviour {
             GameManager.Reset();
             return;
         }
-        Debug.Log(videoPlayer.gameObject.activeSelf);
-        videoPlayer.gameObject.SetActive(true);
-        Debug.Log(videoPlayer.gameObject.activeSelf);
+        videoPlayer.transform.parent.gameObject.SetActive(true);
         videoPlayer.Play();
         StartCoroutine(CheckVideoFinish());
-    }
-
-    private void Update() {
-        Debug.Log(videoPlayer.gameObject.activeSelf);
-
     }
 
     private IEnumerator CheckVideoFinish() {
@@ -46,7 +39,7 @@ public class IntroVideo : MonoBehaviour {
 
     private IEnumerator FadeVideo(CanvasGroup cg, float startAlpha, float endAlpha) {
         if(canvasGroup.alpha == endAlpha) yield break;
-        canvasGroup.gameObject.SetActive(true);
+        videoPlayer.transform.parent.gameObject.SetActive(true);
         float elapsedTime = 0f;
         cg.alpha = startAlpha;
 
@@ -57,8 +50,7 @@ public class IntroVideo : MonoBehaviour {
             yield return null;
         }
         cg.alpha = endAlpha;
-        Debug.Log("setFalse");
-        if(endAlpha == 0) canvasGroup.gameObject.SetActive(false);
+        if(endAlpha == 0) videoPlayer.transform.parent.gameObject.SetActive(false);
     }
 
 }

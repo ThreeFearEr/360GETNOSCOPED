@@ -42,6 +42,7 @@ public class BulletController : MonoBehaviour {
                 hit.transform.GetComponent<EnemyController>().Die();
                 GameManager.AddScore(scoreBounty);
             }
+            gizmosPos.Add(hit.point);
             float distance = Vector3.Distance(trail.transform.position, hit.point);//hit.distance?
             float wholeDistance = distance;
             while(distance > 0) {
@@ -50,13 +51,14 @@ public class BulletController : MonoBehaviour {
 
                 yield return new WaitForEndOfFrame();
             }
-            if(nOfBounces == 0) {
-                Destroy(gameObject, trail.time);
-                yield break;
-            }
             if(hit.transform.gameObject.layer == borderLayer) {
+                if(nOfBounces == 0) {
+                    Destroy(gameObject, trail.time * 10);
+                    yield break;
+                }
                 nOfBounces--;
-                GetComponent<TrailRenderer>().sortingOrder = 20;
+                trail.sortingOrder = 20;
+                GameManager.AudioController.PlayAudio("BulletBounce");
                 StartCoroutine(BulletTravel(hit.point, Vector3.Reflect(direction, hit.normal), hit.transform));
                 break;
             }
@@ -67,5 +69,13 @@ public class BulletController : MonoBehaviour {
         float height = Camera.main.orthographicSize * 2;
         float width = height * Camera.main.aspect;
         return Mathf.Sqrt(width * width + height * height);
+    }
+
+    List<Vector3> gizmosPos = new List<Vector3>();
+    private void OnDrawGizmos() {
+        Gizmos.color = Color.red;
+        foreach(Vector3 pos in gizmosPos) {
+            Gizmos.DrawSphere(pos, 2);
+        }
     }
 }

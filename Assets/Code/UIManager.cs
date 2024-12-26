@@ -11,7 +11,6 @@ public class UIManager : MonoBehaviour {
     CurtainFader curtainFader;
     public PlayerRadial Radial;
     public PlayerReloader Reloader;
-    GameAudio gameAudio;
 
     TextMeshProUGUI scoreTxtBox;
     TextMeshProUGUI additionTxtBox;
@@ -29,7 +28,6 @@ public class UIManager : MonoBehaviour {
         scoreTxtBox = GetComponentsInChildren<TextMeshProUGUI>(true)[0];
         additionTxtBox = GetComponentsInChildren<TextMeshProUGUI>(true)[1];
         scoreAnimator = GetComponentInChildren<Animator>();
-        gameAudio = GetComponentInChildren<GameAudio>();
 
         iddleCursor = Resources.Load<Texture2D>("Cursors/hitmarker");
         reloadCursor = Resources.Load<Texture2D>("Cursors/hourglass");
@@ -74,7 +72,7 @@ public class UIManager : MonoBehaviour {
         StartCoroutine(waitBeforeScoreDie());
     }
     IEnumerator waitBeforeScoreDie() {
-        StartCoroutine(gameAudio.FadeOut());
+        StartCoroutine(GameManager.AudioController.FadeOut());
         scoreAnimator.Play("ScoreDie");
         yield return new WaitForSeconds(2);
         curtainFader.FadeIn();
