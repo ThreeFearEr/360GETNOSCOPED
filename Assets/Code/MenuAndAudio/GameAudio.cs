@@ -22,6 +22,7 @@ public class GameAudio : MonoBehaviour {
 
         AudioSource newSource = gameObject.AddComponent<AudioSource>();
         newSource.playOnAwake = false;
+        newSource.volume = maxVolume;
         soundSources.Add(newSource);
         return newSource;
     }

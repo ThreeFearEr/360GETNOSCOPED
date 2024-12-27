@@ -4,9 +4,10 @@ using UnityEngine;
 
 public static class GameManager {
     
-    public static UIManager UIManager;
+    public static UIController UIController;
     public static SpawnerController SpawnerController;
     public static GameAudio AudioController;
+    public static WebGate WebGate;
 
     public static bool Intro = false;
 
@@ -17,7 +18,7 @@ public static class GameManager {
         }
         set {
             nOfFlicks = value;
-            UIManager.Radial.UpdateText();
+            UIController.Radial.UpdateText();
         }
     }
 
@@ -28,7 +29,7 @@ public static class GameManager {
         }
         set {
             nOfMultiFlicks = value;
-            UIManager.Radial.UpdateText();
+            UIController.Radial.UpdateText();
         }
     }
 
@@ -42,7 +43,7 @@ public static class GameManager {
     }
     public static void AddScore(int value) {
         score += value;
-        UIManager.UpdateScore(value);
+        UIController.UpdateScore(value);
     }
 
     public static void Reset() {

@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void Start() {
-        radial = GameManager.UIManager.GetComponentInChildren<PlayerRadial>();
+        radial = GameManager.UIController.GetComponentInChildren<PlayerRadial>();
     }
 
     void Update() {

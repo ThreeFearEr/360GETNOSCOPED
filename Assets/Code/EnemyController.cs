@@ -50,6 +50,6 @@ public class EnemyController : MonoBehaviour {
         PlayerController player = collision.collider.GetComponent<PlayerController>();
         player.Die();
         Camera.main.GetComponent<CameraController>().Zoom((transform.position - collision.transform.position) / 2, 10, 1);
-        GameManager.UIManager.Die();
+        GameManager.UIController.Die();
     }
 }

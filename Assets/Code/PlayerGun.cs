@@ -34,7 +34,7 @@ public class PlayerGun : MonoBehaviour {
         int flickValue = 1 + GameManager.NOfFlicks * Mathf.Max(GameManager.NOfMultiFlicks, 1);
         bullet.nOfBounces = flickValue;
         bullet.scoreBounty = flickValue;
-        GameManager.UIManager.Radial.ResetRadial(transform.right);
+        GameManager.UIController.Radial.ResetRadial(transform.right);
         GameManager.AudioController.PlayAudio("GunFire");
         GameManager.AudioController.PlayAudio("BulletDrop");
         cameraShaker.Shake(-firePoint.right, recoilPower + GameManager.NOfFlicks * 0.6f, Mathf.Min(recoilDuration + GameManager.NOfMultiFlicks * 0.04f, 0.4f));
@@ -44,16 +44,16 @@ public class PlayerGun : MonoBehaviour {
     }
 
     IEnumerator countDown() {
-        GameManager.UIManager.SetCursorToReload();
+        GameManager.UIController.SetCursorToReload();
         isReloading = true;
         for(float f = 0; f < reloadTime; f += Time.deltaTime) {
-            GameManager.UIManager.Reloader.UpdateReloader(f, reloadTime);
+            GameManager.UIController.Reloader.UpdateReloader(f, reloadTime);
             yield return null;
         }
         isReloading = false;
         GameManager.AudioController.PlayAudio("GunReload");
-        GameManager.UIManager.SetCursorToIddle();
-        GameManager.UIManager.Reloader.HideReloader();
+        GameManager.UIController.SetCursorToIddle();
+        GameManager.UIController.Reloader.HideReloader();
     }
 
     //screen shake on flicks, hitmarker cursor?

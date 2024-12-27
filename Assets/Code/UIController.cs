@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class UIManager : MonoBehaviour {
+public class UIController : MonoBehaviour {
 
     Texture2D iddleCursor;
     Texture2D reloadCursor;
@@ -14,19 +14,21 @@ public class UIManager : MonoBehaviour {
 
     TextMeshProUGUI scoreTxtBox;
     TextMeshProUGUI additionTxtBox;
+    TextMeshProUGUI highscoreBox;
     Animator scoreAnimator;
 
     float additionTime;
     int curAddition;
 
     private void Awake() {
-        GameManager.UIManager = this;
+        GameManager.UIController = this;
 
         curtainFader = GetComponentInChildren<CurtainFader>();
         Radial = GetComponentInChildren<PlayerRadial>();
         Reloader = GetComponentInChildren<PlayerReloader>();
         scoreTxtBox = GetComponentsInChildren<TextMeshProUGUI>(true)[0];
         additionTxtBox = GetComponentsInChildren<TextMeshProUGUI>(true)[1];
+        highscoreBox = GetComponentsInChildren<TextMeshProUGUI>(true)[2];
         scoreAnimator = GetComponentInChildren<Animator>();
 
         iddleCursor = Resources.Load<Texture2D>("Cursors/hitmarker");
@@ -46,6 +48,9 @@ public class UIManager : MonoBehaviour {
         additionTxtBox.text = "+" + curAddition.ToString();
         scoreTxtBox.text = GameManager.Score.ToString();
         scoreAnimator.Play("ScoreAdd");
+    }
+    public void UpdateHighscore(int value) {
+        highscoreBox.text = value.ToString();
     }
 
     public void SetCursorToIddle() {
@@ -72,6 +77,8 @@ public class UIManager : MonoBehaviour {
         StartCoroutine(waitBeforeScoreDie());
     }
     IEnumerator waitBeforeScoreDie() {
+        GameManager.WebGate.SetHighscore(GameManager.Score);
+        UpdateHighscore(GameManager.Score);
         StartCoroutine(GameManager.AudioController.FadeOut());
         scoreAnimator.Play("ScoreDie");
         yield return new WaitForSeconds(2);
