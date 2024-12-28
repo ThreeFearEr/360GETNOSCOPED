@@ -5,9 +5,6 @@ using System;
 
 public class WebGate : MonoBehaviour {
     private string serverUrl = "https://taborbobri.cz/UnityOnlines/noscoped.php";
-    private string nickname;
-    private string deviceID;
-    private int curHighscore = 0;
 
     private void Awake() {
         GameManager.WebGate = this;
@@ -15,34 +12,37 @@ public class WebGate : MonoBehaviour {
         if(!PlayerPrefs.HasKey("DeviceID")) {
             PlayerPrefs.SetString("DeviceID", SystemInfo.deviceUniqueIdentifier);
         }
-        else deviceID = PlayerPrefs.GetString("DeviceID");
+        else GameManager.deviceID = PlayerPrefs.GetString("DeviceID");
         if(!PlayerPrefs.HasKey("Nickname")) {
             PlayerPrefs.SetString("Nickname", "Player_" + UnityEngine.Random.Range(1000, 9999));
         }
-        else nickname = PlayerPrefs.GetString("Nickname");
-        GetCurHighscore(UpdateHighscore, error => Debug.LogError("Error: " + error));
-
-        Debug.Log(PlayerPrefs.GetString("Nickname"));
-        Debug.Log(PlayerPrefs.GetString("DeviceID"));
+        else GameManager.nickname = PlayerPrefs.GetString("Nickname");
+        if(!PlayerPrefs.HasKey("Highscore")) {
+            PlayerPrefs.SetInt("Highscore", 0);
+        }
+        else {
+            GameManager.curHighscore = PlayerPrefs.GetInt("Highscore");
+        }
+        GameManager.UIController.UpdateHighscore(GameManager.curHighscore);
+        GameManager.UIController.UpdateNickname();
     }
-    private void UpdateHighscore(int highscore) {
-        curHighscore = highscore;
-        Debug.Log(curHighscore);
+    public void UpdateHighscore(int highscore) {
+        GameManager.curHighscore = highscore;
+        PlayerPrefs.SetInt("Highscore", highscore);
         GameManager.UIController.UpdateHighscore(highscore);
-    }
-    public void UpdatePlayerPrefs(string username) {
-        PlayerPrefs.SetString("Nickname", username);
     }
 
     //SetHighscore
-    public void SetHighscore(int curHighscore) {
-        if(GameManager.Score < curHighscore) return;
-        StartCoroutine(PostHighscore(deviceID, nickname, curHighscore));
+    public void SetHighscore() {
+        if(GameManager.Score <= GameManager.curHighscore) return;
+        GameManager.curHighscore = GameManager.Score;
+        StartCoroutine(PostHighscore(GameManager.curHighscore));//posts only if ingame score is biger than score from prefs (thus rewriting the prefs wont change the web value)
+        UpdateHighscore(GameManager.curHighscore);
     }
-    private IEnumerator PostHighscore(string deviceID, string username, int score) {
+    private IEnumerator PostHighscore(int score) {
         WWWForm form = new WWWForm();
-        form.AddField("deviceID", deviceID);  // Send the unique device ID
-        form.AddField("nickname", username);  // Send the player's username
+        form.AddField("deviceID", GameManager.deviceID);  // Send the unique device ID
+        form.AddField("nickname", GameManager.nickname);  // Send the player's username
         form.AddField("highscore", score);   // Send the high score
 
         UnityWebRequest www = UnityWebRequest.Post(serverUrl, form);
@@ -65,13 +65,14 @@ public class WebGate : MonoBehaviour {
         StartCoroutine(WebGetCurHighscore(onSuccess, onError));
     }
     private IEnumerator WebGetCurHighscore(Action<int> onSuccess, Action<string> onError) {
-        string url = serverUrl + "?deviceID=" + deviceID;
-
+        string url = serverUrl + "?deviceID=" + GameManager.deviceID;
+        Debug.Log(url);
         UnityWebRequest request = UnityWebRequest.Get(url);
         yield return request.SendWebRequest();
 
         if(request.result == UnityWebRequest.Result.Success) {
             string jsonResponse = request.downloadHandler.text;
+            Debug.LogWarning(jsonResponse);
             CurHighscoreResponse response = JsonUtility.FromJson<CurHighscoreResponse>(jsonResponse);
             onSuccess?.Invoke(response.highscore);
         }

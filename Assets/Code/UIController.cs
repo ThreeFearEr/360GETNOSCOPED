@@ -8,10 +8,11 @@ public class UIController : MonoBehaviour {
     Texture2D iddleCursor;
     Texture2D reloadCursor;
 
-    CurtainFader curtainFader;
+    public CurtainFader curtainFader;
     public PlayerRadial Radial;
     public PlayerReloader Reloader;
 
+    TMP_InputField nicknameInputField;
     TextMeshProUGUI scoreTxtBox;
     TextMeshProUGUI additionTxtBox;
     TextMeshProUGUI highscoreBox;
@@ -26,9 +27,10 @@ public class UIController : MonoBehaviour {
         curtainFader = GetComponentInChildren<CurtainFader>();
         Radial = GetComponentInChildren<PlayerRadial>();
         Reloader = GetComponentInChildren<PlayerReloader>();
-        scoreTxtBox = GetComponentsInChildren<TextMeshProUGUI>(true)[0];
-        additionTxtBox = GetComponentsInChildren<TextMeshProUGUI>(true)[1];
+        nicknameInputField = GetComponentsInChildren<TMP_InputField>(true)[0];
+        scoreTxtBox = GetComponentsInChildren<TextMeshProUGUI>(true)[1];
         highscoreBox = GetComponentsInChildren<TextMeshProUGUI>(true)[2];
+        additionTxtBox = GetComponentsInChildren<TextMeshProUGUI>(true)[3];
         scoreAnimator = GetComponentInChildren<Animator>();
 
         iddleCursor = Resources.Load<Texture2D>("Cursors/hitmarker");
@@ -62,13 +64,23 @@ public class UIController : MonoBehaviour {
         Cursor.SetCursor(reloadCursor, hotspot, CursorMode.Auto);
     }
 
+    public void ChangeNickname() {
+        PlayerPrefs.SetString("Nickname", nicknameInputField.text);
+        GameManager.nickname = nicknameInputField.text;
+    }
+    public void UpdateNickname() {
+        nicknameInputField.text = GameManager.nickname;
+        nicknameInputField.caretPosition = 10;
+    }
+
     private void Start() {
         curtainFader.FadeOut();
     }
 
     bool resetEnabled = false;
     private void Update() {
-        if(Input.GetKeyDown(KeyCode.Escape) || (Input.GetKeyDown(KeyCode.Mouse0) && !GameManager.isPlaying && resetEnabled)) {
+        if(Input.GetKeyDown(KeyCode.Escape) || (Input.GetKeyDown(KeyCode.Space) && !GameManager.isPlaying && resetEnabled)) {
+            GameManager.WebGate.SetHighscore();
             curtainFader.NextScene();
         }
     }
@@ -77,8 +89,6 @@ public class UIController : MonoBehaviour {
         StartCoroutine(waitBeforeScoreDie());
     }
     IEnumerator waitBeforeScoreDie() {
-        GameManager.WebGate.SetHighscore(GameManager.Score);
-        UpdateHighscore(GameManager.Score);
         StartCoroutine(GameManager.AudioController.FadeOut());
         scoreAnimator.Play("ScoreDie");
         yield return new WaitForSeconds(2);

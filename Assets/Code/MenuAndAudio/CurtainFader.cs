@@ -15,7 +15,6 @@ public class CurtainFader : MonoBehaviour
     private void Awake() {
         canvasGroup = GetComponent<CanvasGroup>();
         curtain = GetComponentInChildren<Image>(true);
-
     }
 
     private void Start() {

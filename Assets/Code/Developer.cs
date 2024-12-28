@@ -10,6 +10,12 @@ public class Developer : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        if(Input.GetKey(KeyCode.F1)) {
+            if(Input.GetKeyDown(KeyCode.Alpha1)) {
+                PlayerPrefs.DeleteAll();
+                GameManager.UIController.curtainFader.NextScene();
+            }
+        }
         if(Input.GetKey(KeyCode.F2)) {
             if(Input.GetKeyDown(KeyCode.Alpha1)) Time.timeScale = 1.0f;
             if(Input.GetKeyDown(KeyCode.Alpha2)) Time.timeScale /= 2f;

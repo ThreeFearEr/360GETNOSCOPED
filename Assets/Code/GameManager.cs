@@ -9,6 +9,10 @@ public static class GameManager {
     public static GameAudio AudioController;
     public static WebGate WebGate;
 
+    public static string nickname;
+    public static string deviceID;
+    public static int curHighscore = 0;
+
     public static bool Intro = false;
 
     private static int nOfFlicks = 0;
